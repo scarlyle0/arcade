@@ -20,15 +20,38 @@ public class BallController : MonoBehaviour
         rb.linearVelocity = direction * speed;
     }
 
+    void GetHitPoint(Collision collision)
+    {
+        ContactPoint contact = collision.contacts[0];
+
+        // Convert contact to paddle local space
+        Vector3 localHitPoint = collision.transform.InverseTransformPoint(contact.point);
+
+        Debug.Log($"Local hit point: {localHitPoint}");
+
+        // Get half the paddle's height regardless of scale (using local x-axis)
+        float halfHeight = collision.collider.bounds.extents.x / collision.transform.lossyScale.x;
+
+        // from [-halfHeight, halfHeight] to [0, 1]
+        float normalizedX = Mathf.InverseLerp(-halfHeight, halfHeight, localHitPoint.x);
+
+        Debug.Log($"Hit position along height (X-axis): {normalizedX:F2}");
+    }
+
+
+
     void OnCollisionEnter(Collision collision)
     {
+
         Vector3 velocity = rb.linearVelocity;
 
         if (collision.gameObject.CompareTag("Paddle"))
         {
+            GetHitPoint(collision);
+
             // Add some up/down variation
             velocity.x += Random.Range(-0.2f, 0.2f);
-            speed *= 1.05f; // speed up slightly
+            speed *= 1.05f;
         }
         else if (collision.gameObject.CompareTag("Wall"))
         {
@@ -46,4 +69,5 @@ public class BallController : MonoBehaviour
 
         rb.linearVelocity = velocity.normalized * speed;
     }
+
 }

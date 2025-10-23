@@ -1293,6 +1293,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::BallController
   speed: 8
+  maxBounceAngle: 80
 --- !u!1 &1615077685
 GameObject:
   m_ObjectHideFlags: 0

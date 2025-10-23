@@ -3,6 +3,7 @@ using UnityEngine;
 public class BallController : MonoBehaviour
 {
     public float speed = 8f;
+    public float maxBounceAngle = 80f;
     private Rigidbody rb;
 
     void Start()
@@ -13,21 +14,19 @@ public class BallController : MonoBehaviour
 
     void LaunchBall()
     {
-        float zDirection = Random.value < 0.5f ? -1f : 1f;
-        float xDirection = Random.Range(-0.5f, 0.5f);
+        float zDirection = 1f; //Random.value < 0.5f ? -1f : 1f;
+        float xDirection = 0; // Random.Range(-0.5f, 0.5f);
 
         Vector3 direction = new Vector3(xDirection, 0, zDirection).normalized;
         rb.linearVelocity = direction * speed;
     }
 
-    void GetHitPoint(Collision collision)
+    Vector3 GetHitDirection(Collision collision)
     {
         ContactPoint contact = collision.contacts[0];
 
         // Convert contact to paddle local space
         Vector3 localHitPoint = collision.transform.InverseTransformPoint(contact.point);
-
-        Debug.Log($"Local hit point: {localHitPoint}");
 
         // Get half the paddle's height regardless of scale (using local x-axis)
         float halfHeight = collision.collider.bounds.extents.x / collision.transform.lossyScale.x;
@@ -35,7 +34,24 @@ public class BallController : MonoBehaviour
         // from [-halfHeight, halfHeight] to [0, 1]
         float normalizedX = Mathf.InverseLerp(-halfHeight, halfHeight, localHitPoint.x);
 
-        Debug.Log($"Hit position along height (X-axis): {normalizedX:F2}");
+        // Change from [0,1] to [-0.5, 0.5]
+        float hitOffset = normalizedX - 0.5f;
+
+        // Calculate a bounce angle between -maxBounceAngle and +maxBounceAngle
+        float bounceAngle = hitOffset * 2f * maxBounceAngle;
+
+        // Determine which side the ball came from (left/right)
+        float paddleDir = Mathf.Sign(rb.linearVelocity.z); // negative if coming from right, positive if from left
+
+        // Base direction: reflect horizontally
+        Vector3 baseDir = new Vector3(0, 0, paddleDir);
+
+        // Rotate around Y to add vertical (X) angle
+        Vector3 newDir = Quaternion.Euler(0, -bounceAngle, 0) * baseDir;
+
+        Debug.Log($"Bounce angle: {bounceAngle}, Resulting dir: {newDir}");
+
+        return newDir.normalized;
     }
 
 
@@ -47,16 +63,14 @@ public class BallController : MonoBehaviour
 
         if (collision.gameObject.CompareTag("Paddle"))
         {
-            GetHitPoint(collision);
-
-            // Add some up/down variation
-            velocity.x += Random.Range(-0.2f, 0.2f);
+            Vector3 bounceDirection = GetHitDirection(collision);
             speed *= 1.05f;
+            rb.linearVelocity = bounceDirection.normalized * speed;
+            return;
         }
         else if (collision.gameObject.CompareTag("Wall"))
         {
             // Add some horizontal nudge when bouncing vertically
-            velocity.z += Random.Range(-0.2f, 0.2f);
         }
         else if (collision.gameObject.CompareTag("Goal"))
         {
@@ -66,8 +80,6 @@ public class BallController : MonoBehaviour
             LaunchBall();
             return;
         }
-
-        rb.linearVelocity = velocity.normalized * speed;
     }
 
 }

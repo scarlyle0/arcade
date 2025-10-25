@@ -5,6 +5,7 @@ public class AIPaddleController : MonoBehaviour
     public Transform ball;
     public float moveSpeed = 6f;
     public float reactionDelay = 0.2f;
+    public float wallLimit = 3.5f;
     public float inaccuracy = 0.5f;
 
     private float targetX;
@@ -21,7 +22,10 @@ public class AIPaddleController : MonoBehaviour
 
         // Move paddle toward target position
         Vector3 newPos = transform.position;
-        newPos.x = Mathf.MoveTowards(newPos.x, targetX, moveSpeed * Time.deltaTime);
+        newPos.x = Mathf.Clamp(
+            Mathf.MoveTowards(newPos.x, targetX, moveSpeed * Time.deltaTime),
+            -wallLimit, wallLimit
+        );
         transform.position = newPos;
     }
 }

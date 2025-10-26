@@ -545,7 +545,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c83aebec23a7249439200e0822a7a349, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PaddleController
-  speed: 5
+  speed: 8
   wallLimit: 3.5
 --- !u!54 &403302198
 Rigidbody:
@@ -938,7 +938,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::AIPaddleController
   ball: {fileID: 1610811400}
   moveSpeed: 6
-  reactionDelay: 0.2
+  reactionDelay: 0.4
+  wallLimit: 3.5
   inaccuracy: 0.5
 --- !u!1 &666314385
 GameObject:

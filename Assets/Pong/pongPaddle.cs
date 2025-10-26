@@ -3,7 +3,7 @@ using UnityEngine.InputSystem;
 
 public class PaddleController : MonoBehaviour
 {
-    public float speed = 5f;
+    public float speed = 8f;
     public float wallLimit = 3.5f;
     private float moveInput;
 

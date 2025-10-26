@@ -4,7 +4,7 @@ public class AIPaddleController : MonoBehaviour
 {
     public Transform ball;
     public float moveSpeed = 6f;
-    public float reactionDelay = 0.2f;
+    public float reactionDelay = 0.4f;
     public float wallLimit = 3.5f;
     public float inaccuracy = 0.5f;
 

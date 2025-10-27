@@ -1,1 +1,12 @@
 *.unity eol=lf
+
+# Force LF for all text files
+* text eol=lf
+
+# Optional: make scripts explicitly LF
+*.cs text eol=lf
+*.shader text eol=lf
+*.txt text eol=lf
+*.json text eol=lf
+*.yaml text eol=lf
+*.yml text eol=lf
